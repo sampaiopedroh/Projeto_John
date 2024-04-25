@@ -77,8 +77,8 @@ function calculateAndShowResult(hasEletiva = false, eletivaPoints = 0) {
 function calculateAverage(hasEletiva, eletivaPoints) {
     let total = 0;
     
-    total += (grades[0] + grades[1]) * 0.25;
-    total += grades[2] * 0.5;
+    total += (grades[0] + grades[1]) * 0.3;
+    total += grades[2] * 0.4;
 
     if (hasEletiva && total < 10) {
         total += eletivaPoints;
