@@ -1,6 +1,10 @@
 const nameInput = document.getElementById('nameInput');
+const questionDiv = document.getElementById('question');
+const answerInput = document.getElementById('answerInput');
+const resultDiv = document.getElementById('result');
 let subject = '';
 let grades = [];
+let step = 0;
 
 function speak(text) {
     const synth = window.speechSynthesis;
@@ -9,24 +13,64 @@ function speak(text) {
     synth.speak(utterThis);
 }
 
-function askForSubject() {
-    speak(`${nameInput.value}, para qual matéria é essa média?`);
+function askQuestion(text) {
+    speak(text);
+    questionDiv.innerHTML = text;
 }
 
-function askForGrade() {
-    speak(`Qual foi a sua primeira nota em ${subject}?`);
+function captureGrade() {
+    const answer = answerInput.value.trim();
+    
+    if (step === 0) {
+        subject = answer;
+        askQuestion(`${nameInput.value}, qual foi a sua primeira nota em ${subject}?`);
+    } else if (step === 1 || step === 2 || step === 3) {
+        const grade = parseFloat(answer);
+        if (!isNaN(grade)) {
+            grades.push(grade);
+            
+            if (step === 1) {
+                askQuestion(`${nameInput.value}, qual foi a sua segunda nota em ${subject}?`);
+            } else if (step === 2) {
+                askQuestion(`${nameInput.value}, qual foi a sua terceira nota em ${subject}?`);
+            } else if (step === 3) {
+                askQuestion(`${nameInput.value}, você tem pontos de eletiva para ${subject}? (Responda com Y ou N)`);
+            }
+        } else {
+            speak('Por favor, insira uma nota válida.');
+        }
+    } else if (step === 4) {
+        if (answer.toUpperCase() === 'Y' || answer.toUpperCase() === 'N') {
+            if (answer.toUpperCase() === 'Y') {
+                askQuestion(`${nameInput.value}, quantos pontos de eletiva você tem para ${subject}?`);
+            } else {
+                grades.push(0);
+                calculateAndShowResult();
+            }
+        } else {
+            speak('Por favor, responda com Y ou N.');
+        }
+    } else if (step === 5) {
+        const grade = parseFloat(answer);
+        if (!isNaN(grade)) {
+            grades.push(grade);
+            calculateAndShowResult();
+        } else {
+            speak('Por favor, insira uma nota válida.');
+        }
+    }
+    
+    step++;
 }
 
-function askForSecondGrade() {
-    speak(`Qual foi a sua segunda nota em ${subject}?`);
-}
-
-function askForThirdGrade() {
-    speak(`Qual foi a sua terceira nota em ${subject}?`);
-}
-
-function askForEletivePoints() {
-    speak(`Você tem pontos de eletiva para ${subject}? Se sim, quantos pontos?`);
+function calculateAndShowResult() {
+    const average = calculateAverage();
+    const classification = classifyAverage(average);
+    const message = `${nameInput.value}, sua média em ${subject} foi ${average}, você está ${classification}.`;
+    
+    speak(message);
+    resultDiv.innerHTML = message;
+    resetValues();
 }
 
 function calculateAverage() {
@@ -36,53 +80,20 @@ function calculateAverage() {
 }
 
 function classifyAverage(average) {
-    if (average >= 6) {
+    if (average > 6) {
         return 'acima da média';
-    } else if (average >= 4) {
+    } else if (average == 6) {
         return 'na média';
     } else {
         return 'abaixo da média';
     }
 }
 
-function main() {
-    const name = nameInput.value;
-    speak(`${name}, para qual matéria é essa média?`);
-    
-    const subjectInput = prompt('Para qual matéria é essa média?');
-    if (subjectInput) {
-        subject = subjectInput;
-        askForGrade();
-    }
-}
-
-function captureGrade() {
-    const grade = parseFloat(prompt('Qual foi a sua nota?'));
-    if (!isNaN(grade)) {
-        grades.push(grade);
-
-        if (grades.length === 1) {
-            askForSecondGrade();
-        } else if (grades.length === 2) {
-            askForThirdGrade();
-        } else if (grades.length === 3) {
-            askForEletivePoints();
-        } else {
-            const average = calculateAverage();
-            const classification = classifyAverage(average);
-            const message = `${nameInput.value}, sua média em ${subject} foi ${average}, você está ${classification} da média.`;
-            speak(message);
-            resetValues();
-        }
-    } else {
-        speak('Por favor, insira uma nota válida.');
-        captureGrade();
-    }
-}
-
 function resetValues() {
     grades = [];
     document.getElementById('nameInput').disabled = false;
+    answerInput.value = '';
+    step = 0;
 }
 
 window.captureGrade = captureGrade;
