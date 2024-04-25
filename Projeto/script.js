@@ -24,16 +24,16 @@ function captureGrade() {
     
     if (step === 0) {
         subject = answer;
-        askQuestion(`${nameInput.value}, qual foi a sua primeira nota em ${subject}?`);
+        askQuestion(`${nameInput.value}, qual foi a sua nota de Trabalho Individual em ${subject}?`);
     } else if (step === 1 || step === 2 || step === 3) {
         const grade = parseFloat(answer);
         if (!isNaN(grade)) {
             grades.push(grade);
             
             if (step === 1) {
-                askQuestion(`${nameInput.value}, qual foi a sua segunda nota em ${subject}?`);
+                askQuestion(`${nameInput.value}, qual foi a sua nota de Trabalho em Grupo em ${subject}?`);
             } else if (step === 2) {
-                askQuestion(`${nameInput.value}, qual foi a sua terceira nota em ${subject}?`);
+                askQuestion(`${nameInput.value}, qual foi a sua nota da Trimestral em ${subject}?`);
             } else if (step === 3) {
                 askQuestion(`${nameInput.value}, você tem pontos de eletiva para ${subject}? (Responda com Y ou N)`);
             }
