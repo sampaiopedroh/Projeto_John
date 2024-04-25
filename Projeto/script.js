@@ -16,6 +16,7 @@ function speak(text) {
 function askQuestion(text) {
     speak(text);
     questionDiv.innerHTML = text;
+    answerInput.value = ''; // Limpar o campo de input
 }
 
 function captureGrade() {
@@ -51,20 +52,20 @@ function captureGrade() {
             speak('Por favor, responda com Y ou N.');
         }
     } else if (step === 5) {
-        const grade = parseFloat(answer);
-        if (!isNaN(grade)) {
-            grades.push(grade);
-            calculateAndShowResult();
+        const eletivaPoints = parseFloat(answer);
+        if (!isNaN(eletivaPoints)) {
+            grades.push(eletivaPoints);
+            calculateAndShowResult(true, eletivaPoints);
         } else {
-            speak('Por favor, insira uma nota válida.');
+            speak('Por favor, insira uma quantidade válida de pontos de eletiva.');
         }
     }
     
     step++;
 }
 
-function calculateAndShowResult() {
-    const average = calculateAverage();
+function calculateAndShowResult(hasEletiva = false, eletivaPoints = 0) {
+    const average = calculateAverage(hasEletiva, eletivaPoints);
     const classification = classifyAverage(average);
     const message = `${nameInput.value}, sua média em ${subject} foi ${average}, você está ${classification}.`;
     
@@ -73,10 +74,18 @@ function calculateAndShowResult() {
     resetValues();
 }
 
-function calculateAverage() {
-    const total = grades.reduce((acc, grade) => acc + grade, 0);
-    const average = total / grades.length;
-    return average.toFixed(1);
+function calculateAverage(hasEletiva, eletivaPoints) {
+    let total = 0;
+    
+    total += (grades[0] + grades[1]) * 0.25;
+    total += grades[2] * 0.5;
+
+    if (hasEletiva && total < 10) {
+        total += eletivaPoints;
+    }
+    
+    const average = total.toFixed(1);
+    return average;
 }
 
 function classifyAverage(average) {
@@ -92,7 +101,7 @@ function classifyAverage(average) {
 function resetValues() {
     grades = [];
     document.getElementById('nameInput').disabled = false;
-    answerInput.value = '';
+    answerInput.value = ''; // Limpar o campo de input
     step = 0;
 }
 
