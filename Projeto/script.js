@@ -35,21 +35,21 @@ function captureGrade() {
             } else if (step === 2) {
                 askQuestion(`${nameInput.value}, qual foi a sua nota da Trimestral em ${subject}?`);
             } else if (step === 3) {
-                askQuestion(`${nameInput.value}, você tem pontos de eletiva para ${subject}? (Responda com Y ou N)`);
+                askQuestion(`${nameInput.value}, você tem pontos de eletiva para ${subject}? (Responda com S ou N)`);
             }
         } else {
             speak('Por favor, insira uma nota válida.');
         }
     } else if (step === 4) {
-        if (answer.toUpperCase() === 'Y' || answer.toUpperCase() === 'N') {
-            if (answer.toUpperCase() === 'Y') {
+        if (answer.toUpperCase() === 'S' || answer.toUpperCase() === 'N') {
+            if (answer.toUpperCase() === 'S') {
                 askQuestion(`${nameInput.value}, quantos pontos de eletiva você tem para ${subject}?`);
             } else {
                 grades.push(0);
                 calculateAndShowResult();
             }
         } else {
-            speak('Por favor, responda com Y ou N.');
+            speak('Por favor, responda com S ou N.');
         }
     } else if (step === 5) {
         const eletivaPoints = parseFloat(answer);
